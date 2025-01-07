@@ -106,111 +106,38 @@ green&white;,;09/15/17,   Gail Phelps   ;,;$30.52
 ;,;   $22.66   ;,; green&white&blue;,;09/15/17"""
 
 #------------------------------------------------
-# Start coding below!
+# Replace delimiters with ' - '
+daily_sales_replaced = daily_sales.replace(";,;", " - ")
 
-daily_sales_replaced = daily_sales.replace(";,;" , " - ")
+# Split the sales string into individual transactions
 daily_transaction = daily_sales_replaced.split(',')
-#print(daily_transaction)
 
-
-#5
+# Split each transaction into customer, sale, and thread sold
 daily_transactions_split = [i.split('-') for i in daily_transaction]
-#print(daily_transactions_split)
 
-
-
-
-transactions_clean =[]
-
+# Clean up the data: strip spaces and remove newlines
+transactions_clean = []
 for transaction in daily_transactions_split:
-   one_transaction = []
-   for entry in transaction:
-       entry = entry.replace('\n',"").strip()
-       one_transaction.append(entry)
-   transactions_clean.append(one_transaction)
-#print(transactions_clean)
+    one_transaction = [entry.replace('\n', "").strip() for entry in transaction]  # Clean each entry
+    transactions_clean.append(one_transaction)  # Add to cleaned list
 
-customers = []
-sales = []
-thread_sold =[]
+# Extract customer names, sales, and thread sold into separate lists
+customers = [sale_trx[0] for sale_trx in transactions_clean]  # Customers list
+sales = [sale_trx[1] for sale_trx in transactions_clean]  # Sales list
+thread_sold = [sale_trx[2] for sale_trx in transactions_clean]  # Threads sold list
 
-for sale_trx in transactions_clean:
-  customers.append(sale_trx[0])
-  sales.append(sale_trx[1])
-  thread_sold.append(sale_trx[2])
+# Calculate total sales by summing amounts after removing the '$' sign
+total_sales = sum(float(amount.replace('$', "")) for amount in sales)
 
+# Split & flatten the thread sold data by color(s)
+items_with_and = [item.split('&') for item in thread_sold if not item.isalpha()]  # Colors with '&'
+items_without_and = [item.split('&') for item in thread_sold if item.isalpha()]  # Colors without '&'
+thread_sold_split = [i2 for i1 in items_with_and + items_without_and for i2 in i1]  # Flattened list
 
-#print(customers)
-#print(sales)
-#print(thread_sold)
-
-#for i in range(0,len(customers)):
-    #print(f"{customers[i]:<30} | {sales[i]:^10} | {thread_sold[i]:>10}")
-
-total_sales = 0
-for amount in sales:
-    f_amount = float(amount.replace('$',""))
-    total_sales += f_amount
-
-
-
-#17
-
-items_with_and = [item.split('&') for item in thread_sold if not item.isalpha()]
-items_without_and = [item.split('&') for item in thread_sold if item.isalpha()]
-
-thread_sold_split=[]
-
-for i1 in items_with_and:
-    for i2 in i1:
-        thread_sold_split.append(i2)
-
-for i1 in items_without_and:
-    for i2 in i1:
-        thread_sold_split.append(i2)
-
-
-print(thread_sold_split)
-
-
+# Function to count occurrences of a color in the list
 def color_count(color):
-    count_color= thread_sold_split.count(color)
-    print(f' Total of  {count_color} of {color} items sold. ')
+    count_color = thread_sold_split.count(color)  # Count occurrences of the color
+    print(f'Total of {count_color} {color} items sold.')  # Print the count
 
-
-#testing
+# Testing the function for 'white' color
 color_count('white')
-
-
-#the end!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
